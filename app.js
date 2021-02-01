@@ -3,8 +3,8 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-let x = canvas.width/2;
-let y = canvas.height-30;
+let x = canvas.width / 2;
+let y = canvas.height - 30;
 let dx = 2;
 let dy = -2;
 const ballRadius = 10;
@@ -15,6 +15,28 @@ let paddleX = (canvas.width - paddleWidth) / 2;
 
 let rightPressed = false;
 let leftPressed = false;
+
+
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+
+function keyDownHandler(e) {
+  if(e.key == 'Right' || e.key == 'ArrowRight') {
+    rightPressed = true;
+  }
+  if(e.key == 'Left' || e.key == 'ArrowLeft') {
+    leftPressed = true;
+  }
+}
+
+function keyUpHandler(e) {
+  if(e.key == 'Right' || e.key == 'ArrowRight') {
+    rightPressed = false;
+  }
+  if(e.key == 'Left' || e.key == 'ArrowLeft') {
+    leftPressed = false;
+  }
+}
 
 function drawPaddle() {
   ctx.beginPath();
@@ -38,17 +60,18 @@ function draw() {
   drawPaddle();
 
   if(x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
-    dx = -dx;
+    dx = -dx*1.03;
   }
 
   if(y + dy < ballRadius) {
     dy = -dy;
   } else if (y + dy > canvas.height - ballRadius) {
     if (x > paddleX && x < paddleX + paddleWidth) {
-      dy = -dy;
+      dy = -dy*1.03;
     } else {
-      alert("GAME OVER");
+      clearInterval(interval); 
       document.location.reload();
+      alert("GAME OVER");
     }
   }
 
@@ -58,29 +81,8 @@ function draw() {
     paddleX -= 7;
   }
 
-  x += dx;
-  y += dy;
+  x += dx*1.03;
+  y += dy*1.03;
 }
-
-function keyDownHandler(e) {
-  if(e.key == 'Right' || e.key == 'ArrowRight') {
-    rightPressed = true;
-  }
-  if(e.key == 'Left' || e.key == 'ArrowLeft') {
-    leftPressed = true;
-  }
-}
-
-function keyUpHandler(e) {
-  if(e.key == 'Right' || e.key == 'ArrowRight') {
-    rightPressed = false;
-  }
-  if(e.key == 'Left' || e.key == 'ArrowLeft') {
-    leftPressed = false;
-  }
-}
-
-document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keyup", keyUpHandler, false);
 
 let interval = setInterval(draw, 10);
