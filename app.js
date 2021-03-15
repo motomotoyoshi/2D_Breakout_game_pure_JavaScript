@@ -18,8 +18,8 @@ let rightPressed = false;
 let leftPressed = false;
 
 // ブロックの変数
-let brickRowCount = 4;
-let brickColumnCount = 5;
+let brickRowCount = 12;
+let brickColumnCount = 6;
 let brickWidth = 75;
 let brickHeight = 20;
 let brickPadding = 10;
@@ -37,6 +37,9 @@ for(let c = 0; c < brickColumnCount; c++) {
 
 // スコア
 let score = 0;
+
+// ライフ
+let lives = 3;
 
 
 document.addEventListener("keydown", keyDownHandler, false);
@@ -93,6 +96,12 @@ function drawScore() {
   ctx.fillText(`Score: ${score}`, 8, 20);
 }
 
+function drawLives() {
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#0095DD";
+  ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20);
+}
+
 function drawPaddle() {
   ctx.beginPath();
   ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
@@ -141,6 +150,7 @@ function draw() {
   drawBall();
   drawPaddle();
   drawScore();
+  drawLives();
   collisionnDetection();
 
   if(x + dx >= canvas.width - ballRadius || x + dx <= ballRadius) {
@@ -155,9 +165,16 @@ function draw() {
         dy = -dy * 1.03;
       }
     } else {
-      alert(`GAME OVER\nYOUR SCORE: ${score}`);
-      document.location.reload();
-      clearInterval(interval); 
+      lives--;
+      if(!lives) {
+        alert(`GAME OVER\nYOUR SCORE: ${score}`);
+        document.location.reload();
+        clearInterval(interval); 
+      } else {
+        x = canvas.width / 2;
+        y = canvas.height - 30;
+        paddleX = (canvas.width - paddleWidth) / 2;
+      }
     }
   }
 
@@ -169,6 +186,8 @@ function draw() {
 
   x += dx*1.03;
   y += dy*1.03;
+  requestAnimationFrame(draw);
 }
 
-let interval = setInterval(draw, 10);
+
+draw();
