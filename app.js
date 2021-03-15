@@ -3,12 +3,14 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
+// ボールの変数
 let x = canvas.width / 2;
 let y = canvas.height - 30;
 let dx = 2;
 let dy = -2;
 const ballRadius = 10;
 
+// パドルの変数
 let paddleHeight = 10;
 let paddleWidth = 75;
 let paddleX = (canvas.width - paddleWidth) / 2;
@@ -24,14 +26,18 @@ let brickHeight = 20;
 let brickPadding = 10;
 let brickOffsetTop = 30;
 let brickOffsetleft = 30;
+let brickStatusMax = 3;
 
 let bricks = [];
 for(let c = 0; c < brickColumnCount; c++) {
   bricks[c] = [];
   for(let r = 0; r < brickRowCount; r++) {
-    bricks[c][r] = {x: 0, y: 0, status: 3};
+    bricks[c][r] = {x: 0, y: 0, status: brickStatusMax};
   }
 }
+
+// スコア
+let score = 0;
 
 
 document.addEventListener("keydown", keyDownHandler, false);
@@ -63,10 +69,21 @@ function collisionnDetection() {
         if(x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
           dy = -dy;
           b.status--;
+          score++;
+          if(score == brickRowCount * brickColumnCount * brickStatusMax) {
+            alert(`YOU WIN, CONGRATULATIONS!\nYOUR SCORE: ${score}`);
+            document.location.reload();
+          }
         }
       }
     }
   }
+}
+
+function drawScore() {
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#0095DD";
+  ctx.fillText(`Score: ${score}`, 8, 20);
 }
 
 function drawPaddle() {
@@ -116,6 +133,7 @@ function draw() {
   drawBricks();
   drawBall();
   drawPaddle();
+  drawScore();
   collisionnDetection();
 
   if(x + dx >= canvas.width - ballRadius || x + dx <= ballRadius) {
@@ -130,7 +148,7 @@ function draw() {
         dy = -dy * 1.03;
       }
     } else {
-      alert("GAME OVER");
+      alert(`GAME OVER\nYOUR SCORE: ${score}`);
       document.location.reload();
       clearInterval(interval); 
     }
